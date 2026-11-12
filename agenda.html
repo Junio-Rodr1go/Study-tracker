@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - Study Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/agenda.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <div class="header-top">
+                <a href="index.html" class="back-btn">← Voltar</a>
+                <h1>📅 Agenda</h1>
+                <a href="stats.html" class="back-btn">📊 Stats</a>
+            </div>
+            <p>Organize suas tarefas e prazos</p>
+        </div>
+
+        <!-- ===== RESUMO ===== -->
+        <div class="summary-card">
+            <div class="summary-item">
+                <div class="summary-value" id="totalTasks">0</div>
+                <div class="summary-label">Total</div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+                <div class="summary-value pending" id="pendingTasks">0</div>
+                <div class="summary-label">Pendentes</div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+                <div class="summary-value done" id="doneTasks">0</div>
+                <div class="summary-label">Concluídas</div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+                <div class="summary-value late" id="lateTasks">0</div>
+                <div class="summary-label">Atrasadas</div>
+            </div>
+        </div>
+
+        <!-- ===== BARRA DE AÇÕES ===== -->
+        <div class="toolbar">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">Todas</button>
+                <button class="filter-btn" data-filter="pending">Pendentes</button>
+                <button class="filter-btn" data-filter="done">Concluídas</button>
+                <button class="filter-btn" data-filter="late">Atrasadas</button>
+            </div>
+            <button class="btn-new-task" id="newTaskBtn">+ Nova Tarefa</button>
+        </div>
+
+        <!-- ===== LISTA DE TAREFAS ===== -->
+        <div class="tasks-list" id="tasksList">
+            <!-- Preenchido via JS -->
+        </div>
+    </div>
+
+    <!-- ===== MODAL: CRIAR / EDITAR TAREFA ===== -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <h2 id="modalTitle">Nova Tarefa</h2>
+
+            <label class="modal-label">Título</label>
+            <input type="text" id="taskTitleInput" placeholder="Ex: Estudar matemática" maxlength="80">
+
+            <label class="modal-label">Prazo</label>
+            <input type="datetime-local" id="taskDeadlineInput">
+
+            <label class="modal-label">Descrição (opcional)</label>
+            <textarea id="taskDescInput" placeholder="Detalhes da tarefa..." maxlength="300" rows="3"></textarea>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelTaskBtn">Cancelar</button>
+                <button class="btn-save" id="saveTaskBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: CONFIRMAR EXCLUSÃO ===== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-delete">
+            <div class="delete-icon">🗑️</div>
+            <h2>Excluir tarefa?</h2>
+            <p id="deleteTaskTitle">—</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelDeleteBtn">Cancelar</button>
+                <button class="btn-delete" id="confirmDeleteBtn">Sim, excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/agenda.js"></script>
+</body>
+</html>

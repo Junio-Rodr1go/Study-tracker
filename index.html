@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tracker - Contador de Estudos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="site-logo">
+                <img src="assets/logo.svg" alt="Study Tracker" height="100">
+            </h1>
+            <p>Contabilize suas horas de estudo por matéria</p>
+            <div class="header-links">
+                <a href="stats.html" class="stats-link">📊 Estatísticas</a>
+                <a href="agenda.html" class="stats-link">📅 Agenda</a>
+            </div>
+        </div>
+
+        <!-- ===== FRASE DO DIA ===== -->
+        <div class="quote-card" id="quoteCard">
+            <div class="quote-icon">💬</div>
+            <div class="quote-content">
+                <div class="quote-text" id="quoteText">Carregando...</div>
+                <div class="quote-author" id="quoteAuthor">—</div>
+            </div>
+        </div>
+
+        <!-- ===== RESUMO DO DIA ===== -->
+        <div class="day-summary">
+            <div class="day-summary-header">
+                <span class="day-label">📅 Hoje</span>
+                <span class="day-total" id="dayTotal">00:00:00</span>
+            </div>
+            <div class="day-subjects" id="daySubjects">
+                <div class="empty-day">Nenhuma sessão hoje ainda</div>
+            </div>
+        </div>
+
+        <!-- ===== SELEÇÃO DE MATÉRIA ===== -->
+        <div class="subject-selector">
+            <label for="subjectSelect">Estudando:</label>
+            <div class="subject-row">
+                <select id="subjectSelect" class="subject-select">
+                    <!-- Preenchido via JS -->
+                </select>
+                <button class="btn-add-subject" id="addSubjectBtn" title="Adicionar matéria">+</button>
+            </div>
+        </div>
+
+        <!-- ===== TIMER ===== -->
+        <div class="timer-section">
+            <div class="active-subject" id="activeSubject">Selecione uma matéria</div>
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="timer-controls">
+                <button class="btn btn-start" id="startBtn">▶ Iniciar</button>
+                <button class="btn btn-pause" id="pauseBtn" disabled>⏸ Pausar</button>
+                <button class="btn btn-reset" id="resetBtn">↺ Resetar</button>
+            </div>
+        </div>
+
+        <!-- ===== ESTATÍSTICAS GERAIS ===== -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">⏱️</div>
+                <span class="value" id="todayTime">00:00:00</span>
+                <span class="label">Hoje</span>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🏆</div>
+                <span class="value" id="totalTime">00:00:00</span>
+                <span class="label">Total</span>
+            </div>
+        </div>
+
+        <!-- ===== HISTÓRICO ===== -->
+        <div class="history-section">
+            <div class="history-title">
+                <span>📋 Histórico de Sessões</span>
+                <button class="clear-btn" id="clearBtn">Limpar</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-history">Nenhuma sessão registrada ainda</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: ADICIONAR MATÉRIA ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>Nova Matéria</h2>
+            <input type="text" id="subjectNameInput" placeholder="Ex: Matemática, História..." maxlength="30">
+            <div class="modal-color-picker">
+                <span>Cor:</span>
+                <div class="color-options" id="colorOptions"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-reset" id="cancelModalBtn">Cancelar</button>
+                <button class="btn btn-start" id="confirmModalBtn">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
