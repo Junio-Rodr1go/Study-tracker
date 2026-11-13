@@ -327,14 +327,6 @@ function saveSession(duration, subjectId) {
     }
 }
 
-function clearHistory() {
-    if (sessions.length === 0) return;
-    if (confirm('Limpar o histórico exibido na tela?\n\nSeus dados salvos na nuvem NÃO serão apagados.')) {
-        sessions = [];
-        renderAll();
-    }
-}
-
 // ============================================
 // Troca de matéria
 // ============================================
