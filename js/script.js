@@ -301,17 +301,29 @@ function saveSession(duration, subjectId) {
 
     if (currentUser && duration > 0) {
         const uid = currentUser.uid;
+        const subject = getSubjectById(subjectId);
 
+        // 1) Total geral do usuário
         db.collection('users').doc(uid).set({
             email: currentUser.email,
             totalSegundos: firebase.firestore.FieldValue.increment(duration)
         }, { merge: true }).catch(err => console.warn('Erro total:', err));
 
+        // 2) Sessão individual
         db.collection('users').doc(uid).collection('sessions').add({
             duration: duration,
             date: session.date,
             subjectId: subjectId
         }).catch(err => console.warn('Erro sessão:', err));
+
+        // 3) Tempo acumulado por matéria
+        if (subject) {
+            db.collection('users').doc(uid).collection('subjects').doc(subjectId).set({
+                name: subject.name,
+                color: subject.color,
+                totalSegundos: firebase.firestore.FieldValue.increment(duration)
+            }, { merge: true }).catch(err => console.warn('Erro matéria:', err));
+        }
     }
 }
 
@@ -319,10 +331,15 @@ function clearHistory() {
     if (sessions.length === 0) return;
     if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
         if (currentUser) {
-            db.collection('users').doc(currentUser.uid).collection('sessions')
-                .get()
+            const uid = currentUser.uid;
+            const batch = db.batch();
+
+            db.collection('users').doc(uid).collection('sessions')
+                .get().then(snap => {
+                    snap.forEach(doc => batch.delete(doc.ref));
+                    return db.collection('users').doc(uid).collection('subjects').get();
+                })
                 .then(snap => {
-                    const batch = db.batch();
                     snap.forEach(doc => batch.delete(doc.ref));
                     return batch.commit();
                 })
