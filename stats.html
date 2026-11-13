@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- ... seus estilos e fontes ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatísticas - Study Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/stats.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <!-- ... seu header ... -->
+            <div class="header-top">
+                <a href="index.html" class="back-btn">← Voltar</a>
+                <h1>📊 Estatísticas</h1>
+                <a href="ranking.html" class="back-btn">🏆 Ranking</a>
+            </div>
+            <p>Veja seu progresso nos estudos</p>
         </div>
 
-        <!-- Apenas KPI de Total -->
+        <!-- Apenas o KPI de Total -->
         <div class="kpi-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
             <div class="kpi-card">
                 <div class="kpi-icon">🏆</div>
@@ -42,7 +50,12 @@
     </div>
 
     <!-- Firebase SDK -->
-    <!-- ... seus scripts do Firebase e firebase-config.js ... -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    
+    <!-- Apenas o stats.js, NUNCA o script.js aqui -->
     <script src="js/stats.js"></script>
 </body>
 </html>
