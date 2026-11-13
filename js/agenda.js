@@ -1,12 +1,12 @@
 // ============================================
-// STUDY TRACKER - Agenda de Tarefas
+// STUDY TRACKER - Agenda (Firestore)
 // ============================================
 
-// ===== Estado =====
-let tasks = JSON.parse(localStorage.getItem('studyTasks')) || [];
+let tasks = [];
 let currentFilter = 'all';
 let editingTaskId = null;
 let deletingTaskId = null;
+let currentUserAgenda = null;
 
 // ===== Elementos =====
 const totalTasksEl = document.getElementById('totalTasks');
@@ -31,18 +31,10 @@ const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 // Helpers
 // ============================================
 
-function saveTasks() {
-    localStorage.setItem('studyTasks', JSON.stringify(tasks));
-}
-
 function generateId() {
     return 'task-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 }
 
-/**
- * Retorna o status de prazo de uma tarefa:
- * 'late' | 'today' | 'soon' | 'future' | 'done'
- */
 function getDeadlineStatus(task) {
     if (task.done) return 'done';
     if (!task.deadline) return 'future';
@@ -60,9 +52,6 @@ function getDeadlineStatus(task) {
     return 'future';
 }
 
-/**
- * Formata a data de prazo de forma legível
- */
 function formatDeadline(task) {
     if (!task.deadline) return 'Sem prazo';
     const deadline = new Date(task.deadline);
@@ -91,6 +80,12 @@ function formatDeadline(task) {
         return `📅 Em ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
     }
     return `📅 ${dateStr} ${timeStr}`;
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }
 
 // ============================================
@@ -137,24 +132,16 @@ function getFilteredTasks() {
         if (currentFilter === 'pending') return !t.done;
         if (currentFilter === 'done') return t.done;
         if (currentFilter === 'late') return !t.done && t.deadline && new Date(t.deadline) < now;
-        return true; // 'all'
+        return true;
     });
 }
 
-/**
- * Ordena: primeiro tarefas não concluídas por prazo, depois concluídas
- */
 function sortTasks(list) {
     return [...list].sort((a, b) => {
-        // Concluídas sempre no final
         if (a.done !== b.done) return a.done ? 1 : -1;
-
-        // Sem prazo vai pro final
         if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
         if (!b.deadline) return -1;
-
-        // Por prazo crescente
         return new Date(a.deadline) - new Date(b.deadline);
     });
 }
@@ -218,27 +205,82 @@ function renderTasks() {
     });
 }
 
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
-
 function renderAll() {
     renderStats();
     renderTasks();
 }
 
 // ============================================
-// Ações de tarefas
+// Firestore
+// ============================================
+
+function syncTaskToFirestore(task) {
+    if (!currentUserAgenda || !task) return;
+
+    db.collection('users')
+        .doc(currentUserAgenda.uid)
+        .collection('tasks')
+        .doc(task.id)
+        .set({
+            title: task.title,
+            deadline: task.deadline || null,
+            description: task.description || '',
+            done: !!task.done,
+            createdAt: task.createdAt || new Date().toISOString()
+        }, { merge: true })
+        .catch(err => console.warn('Erro ao sync tarefa:', err));
+}
+
+function deleteTaskFromFirestore(taskId) {
+    if (!currentUserAgenda || !taskId) return;
+
+    db.collection('users')
+        .doc(currentUserAgenda.uid)
+        .collection('tasks')
+        .doc(taskId)
+        .delete()
+        .catch(err => console.warn('Erro ao deletar tarefa:', err));
+}
+
+async function loadTasksFromFirestore() {
+    if (!currentUserAgenda) return;
+
+    try {
+        const snap = await db.collection('users')
+            .doc(currentUserAgenda.uid)
+            .collection('tasks')
+            .get();
+
+        tasks = [];
+        snap.forEach(doc => {
+            const data = doc.data();
+            tasks.push({
+                id: doc.id,
+                title: data.title || '',
+                deadline: data.deadline || null,
+                description: data.description || '',
+                done: !!data.done,
+                createdAt: data.createdAt || new Date().toISOString()
+            });
+        });
+
+        renderAll();
+        console.log('☁️ Agenda carregada:', tasks.length, 'tarefas');
+    } catch (err) {
+        console.warn('Erro ao carregar agenda:', err);
+    }
+}
+
+// ============================================
+// Ações
 // ============================================
 
 function toggleTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
     task.done = !task.done;
-    saveTasks();
     renderAll();
+    syncTaskToFirestore(task);
 }
 
 function openTaskModal(taskId = null) {
@@ -254,12 +296,10 @@ function openTaskModal(taskId = null) {
     } else {
         modalTitle.textContent = 'Nova Tarefa';
         taskTitleInput.value = '';
-        // Sugere amanhã às 18h por padrão
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(18, 0, 0, 0);
-        const iso = tomorrow.toISOString().slice(0, 16);
-        taskDeadlineInput.value = iso;
+        taskDeadlineInput.value = tomorrow.toISOString().slice(0, 16);
         taskDescInput.value = '';
     }
 
@@ -285,26 +325,26 @@ function saveTask() {
     const description = taskDescInput.value.trim();
 
     if (editingTaskId) {
-        // Editar
         const task = tasks.find(t => t.id === editingTaskId);
         if (task) {
             task.title = title;
             task.deadline = deadline;
             task.description = description;
+            syncTaskToFirestore(task);
         }
     } else {
-        // Nova
-        tasks.push({
+        const newTask = {
             id: generateId(),
             title: title,
             deadline: deadline,
             description: description,
             done: false,
             createdAt: new Date().toISOString()
-        });
+        };
+        tasks.push(newTask);
+        syncTaskToFirestore(newTask);
     }
 
-    saveTasks();
     renderAll();
     closeTaskModal();
 }
@@ -324,9 +364,10 @@ function closeDeleteModal() {
 
 function confirmDelete() {
     if (!deletingTaskId) return;
-    tasks = tasks.filter(t => t.id !== deletingTaskId);
-    saveTasks();
+    const id = deletingTaskId;
+    tasks = tasks.filter(t => t.id !== id);
     renderAll();
+    deleteTaskFromFirestore(id);
     closeDeleteModal();
 }
 
@@ -340,7 +381,6 @@ saveTaskBtn.addEventListener('click', saveTask);
 cancelDeleteBtn.addEventListener('click', closeDeleteModal);
 confirmDeleteBtn.addEventListener('click', confirmDelete);
 
-// Enter no título salva
 taskTitleInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -348,7 +388,6 @@ taskTitleInput.addEventListener('keydown', (e) => {
     }
 });
 
-// Esc fecha modais
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeTaskModal();
@@ -356,7 +395,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Click fora fecha modais
 taskModal.addEventListener('click', (e) => {
     if (e.target === taskModal) closeTaskModal();
 });
@@ -365,7 +403,6 @@ deleteModal.addEventListener('click', (e) => {
     if (e.target === deleteModal) closeDeleteModal();
 });
 
-// Delegação de eventos na lista
 tasksListEl.addEventListener('click', (e) => {
     const card = e.target.closest('.task-card');
     if (!card) return;
@@ -377,7 +414,6 @@ tasksListEl.addEventListener('click', (e) => {
     else if (action === 'delete') openDeleteModal(id);
 });
 
-// Filtros
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -388,11 +424,36 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 });
 
 // ============================================
-// Init
+// Init com autenticação
 // ============================================
+
 renderAll();
 
-// Atualiza a cada 30s para refletir mudanças de prazo
+auth.onAuthStateChanged((user) => {
+    if (!user) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    currentUserAgenda = user;
+    loadTasksFromFirestore();
+
+    const header = document.querySelector('.header');
+    if (header && !document.getElementById('logoutBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'logoutBtn';
+        btn.textContent = 'Sair';
+        btn.className = 'logout-btn';
+        btn.addEventListener('click', () => {
+            if (confirm('Deseja sair?')) {
+                auth.signOut().then(() => window.location.href = 'login.html');
+            }
+        });
+        header.style.position = 'relative';
+        header.appendChild(btn);
+    }
+});
+
 setInterval(() => {
     renderStats();
     renderTasks();

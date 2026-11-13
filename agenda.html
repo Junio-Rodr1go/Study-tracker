@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- ===== HEADER ===== -->
         <div class="header">
             <div class="header-top">
                 <a href="index.html" class="back-btn">← Voltar</a>
@@ -19,7 +18,6 @@
             <p>Organize suas tarefas e prazos</p>
         </div>
 
-        <!-- ===== RESUMO ===== -->
         <div class="summary-card">
             <div class="summary-item">
                 <div class="summary-value" id="totalTasks">0</div>
@@ -42,7 +40,6 @@
             </div>
         </div>
 
-        <!-- ===== BARRA DE AÇÕES ===== -->
         <div class="toolbar">
             <div class="filter-group">
                 <button class="filter-btn active" data-filter="all">Todas</button>
@@ -53,26 +50,18 @@
             <button class="btn-new-task" id="newTaskBtn">+ Nova Tarefa</button>
         </div>
 
-        <!-- ===== LISTA DE TAREFAS ===== -->
-        <div class="tasks-list" id="tasksList">
-            <!-- Preenchido via JS -->
-        </div>
+        <div class="tasks-list" id="tasksList"></div>
     </div>
 
-    <!-- ===== MODAL: CRIAR / EDITAR TAREFA ===== -->
     <div class="modal-overlay" id="taskModal">
         <div class="modal">
             <h2 id="modalTitle">Nova Tarefa</h2>
-
             <label class="modal-label">Título</label>
             <input type="text" id="taskTitleInput" placeholder="Ex: Estudar matemática" maxlength="80">
-
             <label class="modal-label">Prazo</label>
             <input type="datetime-local" id="taskDeadlineInput">
-
             <label class="modal-label">Descrição (opcional)</label>
             <textarea id="taskDescInput" placeholder="Detalhes da tarefa..." maxlength="300" rows="3"></textarea>
-
             <div class="modal-actions">
                 <button class="btn-cancel" id="cancelTaskBtn">Cancelar</button>
                 <button class="btn-save" id="saveTaskBtn">Salvar</button>
@@ -80,7 +69,6 @@
         </div>
     </div>
 
-    <!-- ===== MODAL: CONFIRMAR EXCLUSÃO ===== -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal modal-delete">
             <div class="delete-icon">🗑️</div>
@@ -93,6 +81,11 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
     <script src="js/agenda.js"></script>
 </body>
 </html>

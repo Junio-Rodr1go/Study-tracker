@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar - Study Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">📚</div>
+                <h1>Study Tracker</h1>
+                <p id="loginSubtitle">Entre para continuar seus estudos</p>
+            </div>
+            <div class="tabs">
+                <button class="tab active" id="tabLogin" type="button">Entrar</button>
+                <button class="tab" id="tabRegister" type="button">Cadastrar</button>
+            </div>
+            <form id="authForm" class="auth-form">
+                <label>E-mail</label>
+                <input type="email" id="emailInput" placeholder="seu@email.com" required autocomplete="email">
+                <label>Senha</label>
+                <input type="password" id="passwordInput" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="current-password">
+                <div id="errorMsg" class="error-msg"></div>
+                <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
+            </form>
+            <div class="login-footer">
+                <a href="#" id="forgotPassword">Esqueci minha senha</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

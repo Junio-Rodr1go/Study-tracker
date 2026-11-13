@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking - Study Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/ranking.css">
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-top">
+                <a href="index.html" class="back-btn">← Voltar</a>
+                <h1>🏆 Ranking</h1>
+                <a href="stats.html" class="back-btn">📊 Stats</a>
+            </div>
+            <p>Os melhores estudantes do Study Tracker</p>
+        </div>
+
+        <!-- PÓDIO -->
+        <div class="podium-section" id="podiumSection">
+            <div class="podium-loading" id="podiumLoading">Carregando ranking...</div>
+        </div>
+
+        <!-- LISTA COMPLETA -->
+        <div class="list-section">
+            <div class="list-title">
+                <span>📋 Classificação completa</span>
+                <span class="list-count" id="listCount">0 jogadores</span>
+            </div>
+            <div class="ranking-list" id="rankingList">
+                <div class="empty-state">Carregando...</div>
+            </div>
+        </div>
+
+        <!-- SUA POSIÇÃO -->
+        <div class="my-position-card" id="myPositionCard" style="display:none;">
+            <div class="my-position-label">Sua posição</div>
+            <div class="my-position-content">
+                <span class="my-position-rank" id="myRank">#—</span>
+                <span class="my-position-name" id="myName">—</span>
+                <span class="my-position-time" id="myTime">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ranking.js"></script>
+</body>
+</html>
