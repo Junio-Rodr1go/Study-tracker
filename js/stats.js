@@ -174,7 +174,7 @@ function renderWeekChart() {
 }
 
 // ============================================
-// Gráfico: por matéria (usa subjectTotals)
+// Gráfico: por matéria
 // ============================================
 
 let subjectChartInstance = null;
@@ -237,34 +237,39 @@ function renderSubjectChart() {
 
 function renderRanking() {
     const entries = Object.entries(subjectTotals)
-        .map(([id, info]) => [id, Number(info.totalSegundos) || 0, info])
-        .filter(e => e[1] > 0)
-        .sort((a, b) => b[1] - a[1]);
+        .map(([id, info]) => ({
+            id: id,
+            seconds: Number(info.totalSegundos) || 0,
+            name: info.name || 'Sem matéria',
+            color: info.color || '#999'
+        }))
+        .filter(e => e.seconds > 0)
+        .sort((a, b) => b.seconds - a.seconds);
 
     if (entries.length === 0) {
         rankingList.innerHTML = '<div class="empty-history">Sem dados</div>';
         return;
     }
 
-    const max = entries[0][1];
+    const max = entries[0].seconds;
     rankingList.innerHTML = '';
 
-    entries.forEach(([id, seconds, info], i) => {
-        const pct = (seconds / max) * 100;
+    entries.forEach((entry, i) => {
+        const pct = max > 0 ? (entry.seconds / max) * 100 : 0;
         const item = document.createElement('div');
         item.className = 'ranking-item';
         item.innerHTML = `
             <div class="ranking-position top-${i + 1}">${i + 1}</div>
             <div class="ranking-info">
                 <div class="ranking-name">
-                    <span class="ranking-dot" style="background: ${info.color || '#999'}"></span>
-                    ${info.name || 'Sem matéria'}
+                    <span class="ranking-dot" style="background: ${entry.color}"></span>
+                    ${entry.name}
                 </div>
                 <div class="ranking-bar">
-                    <div class="ranking-bar-fill" style="width: ${pct}%; background: ${info.color || '#999'}"></div>
+                    <div class="ranking-bar-fill" style="width: ${pct}%; background: ${entry.color}"></div>
                 </div>
             </div>
-            <div class="ranking-time">${formatHM(seconds)}</div>
+            <div class="ranking-time">${formatHM(entry.seconds)}</div>
         `;
         rankingList.appendChild(item);
     });
@@ -329,16 +334,21 @@ function renderMonthChart() {
 
 function renderSubjectTable() {
     const entries = Object.entries(subjectTotals)
-        .map(([id, info]) => [id, Number(info.totalSegundos) || 0, info])
-        .filter(e => e[1] > 0)
-        .sort((a, b) => b[1] - a[1]);
+        .map(([id, info]) => ({
+            id: id,
+            seconds: Number(info.totalSegundos) || 0,
+            name: info.name || 'Sem matéria',
+            color: info.color || '#999'
+        }))
+        .filter(e => e.seconds > 0)
+        .sort((a, b) => b.seconds - a.seconds);
 
     if (entries.length === 0) {
         subjectTable.innerHTML = '<div class="empty-history">Sem dados</div>';
         return;
     }
 
-    const grandTotal = entries.reduce((sum, [, s]) => sum + s, 0);
+    const grandTotal = entries.reduce((sum, e) => sum + e.seconds, 0);
     const uniqueDays = new Set(
         sessions.map(s => startOfDay(new Date(s.date)).getTime())
     ).size;
@@ -356,19 +366,19 @@ function renderSubjectTable() {
     `;
     subjectTable.appendChild(header);
 
-    for (const [id, seconds, info] of entries) {
-        const pct = ((seconds / grandTotal) * 100).toFixed(1);
-        const dailyAvg = seconds / safeDays;
+    for (const entry of entries) {
+        const pct = ((entry.seconds / grandTotal) * 100).toFixed(1);
+        const dailyAvg = entry.seconds / safeDays;
 
         const row = document.createElement('div');
         row.className = 'table-row';
-        row.style.borderLeftColor = info.color || '#999';
+        row.style.borderLeftColor = entry.color;
         row.innerHTML = `
             <div class="table-subject">
-                <span class="table-dot" style="background: ${info.color || '#999'}"></span>
-                ${info.name || 'Sem matéria'}
+                <span class="table-dot" style="background: ${entry.color}"></span>
+                ${entry.name}
             </div>
-            <span class="table-value highlight">${formatSmart(seconds)}</span>
+            <span class="table-value highlight">${formatSmart(entry.seconds)}</span>
             <span class="table-value">${formatSmart(dailyAvg)}</span>
             <span class="table-value">${pct}%</span>
         `;
