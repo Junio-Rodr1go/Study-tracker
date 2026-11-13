@@ -19,7 +19,7 @@
             <p>Veja seu progresso nos estudos</p>
         </div>
 
-        <!-- Apenas o KPI de Total -->
+        <!-- Apenas o KPI de Total, pois o histórico é estático -->
         <div class="kpi-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
             <div class="kpi-card">
                 <div class="kpi-icon">🏆</div>
@@ -55,7 +55,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     
-    <!-- Apenas o stats.js, NUNCA o script.js aqui -->
+    <!-- ⚠️ APENAS o stats.js. Certifique-se de que NÃO existe um <script src="js/script.js"> aqui -->
     <script src="js/stats.js"></script>
 </body>
 </html>
