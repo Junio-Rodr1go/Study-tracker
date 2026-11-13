@@ -1,109 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estatísticas - Study Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <!-- ... seus estilos e fontes ... -->
     <link rel="stylesheet" href="css/stats.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-
 <body>
     <div class="container">
-        <!-- ===== HEADER ===== -->
         <div class="header">
-            <div class="header-top">
-                <a href="index.html" class="back-btn">← Voltar</a>
-                <h1>📊 Estatísticas</h1>
-                <div class="header-spacer"></div>
-            </div>
-            <p>Veja seu progresso nos estudos</p>
+            <!-- ... seu header ... -->
         </div>
 
-        <!-- ===== KPIs ===== -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-icon">⏱️</div>
-                <div class="kpi-value" id="kpiToday">00:00</div>
-                <div class="kpi-label">Hoje</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-icon">📅</div>
-                <div class="kpi-value" id="kpiWeek">00:00</div>
-                <div class="kpi-label">Esta semana</div>
-            </div>
+        <!-- Apenas KPI de Total -->
+        <div class="kpi-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
             <div class="kpi-card">
                 <div class="kpi-icon">🏆</div>
                 <div class="kpi-value" id="kpiTotal">00:00</div>
-                <div class="kpi-label">Total</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-icon">🔥</div>
-                <div class="kpi-value" id="kpiStreak">0</div>
-                <div class="kpi-label">Dias seguidos</div>
+                <div class="kpi-label">Tempo Total Salvo</div>
             </div>
         </div>
 
-        <!-- ===== GRÁFICO: ÚLTIMOS 7 DIAS ===== -->
-        <div class="chart-card">
-            <div class="chart-title">
-                <span>📈 Últimos 7 dias</span>
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="weekChart"></canvas>
-            </div>
-        </div>
-
-        <!-- ===== GRÁFICO: POR MATÉRIA ===== -->
         <div class="chart-grid">
             <div class="chart-card">
-                <div class="chart-title">
-                    <span>🥧 Tempo por matéria</span>
-                </div>
-                <div class="chart-wrapper doughnut-wrapper">
-                    <canvas id="subjectChart"></canvas>
-                </div>
+                <div class="chart-title"><span>🥧 Tempo por matéria</span></div>
+                <div class="chart-wrapper doughnut-wrapper"><canvas id="subjectChart"></canvas></div>
             </div>
-
             <div class="chart-card">
-                <div class="chart-title">
-                    <span>🏅 Ranking de matérias</span>
-                </div>
+                <div class="chart-title"><span>🏅 Ranking de matérias</span></div>
                 <div class="ranking-list" id="rankingList">
                     <div class="empty-history">Sem dados ainda</div>
                 </div>
             </div>
         </div>
 
-        <!-- ===== GRÁFICO: EVOLUÇÃO MENSAL ===== -->
         <div class="chart-card">
-            <div class="chart-title">
-                <span>📊 Evolução nos últimos 30 dias</span>
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="monthChart"></canvas>
-            </div>
-        </div>
-
-        <!-- ===== RESUMO POR MATÉRIA (TABELA) ===== -->
-        <div class="chart-card">
-            <div class="chart-title">
-                <span>📋 Resumo detalhado por matéria</span>
-            </div>
+            <div class="chart-title"><span>📋 Resumo detalhado por matéria</span></div>
             <div class="subject-table" id="subjectTable">
                 <div class="empty-history">Sem dados ainda</div>
             </div>
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="js/firebase-config.js"></script>
+    <!-- Firebase SDK -->
+    <!-- ... seus scripts do Firebase e firebase-config.js ... -->
     <script src="js/stats.js"></script>
 </body>
-
 </html>
