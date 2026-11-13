@@ -6,10 +6,7 @@ let subjectTotals = {};
 let currentUserStats = null;
 
 // ===== Elementos =====
-const kpiToday = document.getElementById('kpiToday');
-const kpiWeek = document.getElementById('kpiWeek');
 const kpiTotal = document.getElementById('kpiTotal');
-const kpiStreak = document.getElementById('kpiStreak');
 const rankingList = document.getElementById('rankingList');
 const subjectTable = document.getElementById('subjectTable');
 
@@ -29,7 +26,7 @@ function formatSmart(totalSeconds) {
 }
 
 // ============================================
-// KPIs (Apenas Total Geral)
+// KPIs
 // ============================================
 
 function renderKPIs() {
@@ -38,13 +35,7 @@ function renderKPIs() {
         total += subjectTotals[id].totalSegundos;
     }
     
-    // Atualiza o Total com segurança
     if (kpiTotal) kpiTotal.textContent = formatSmart(total);
-    
-    // Como o histórico agora é estático, zeramos os outros KPIs na tela de estatísticas
-    if (kpiToday) kpiToday.textContent = "—";
-    if (kpiWeek) kpiWeek.textContent = "—";
-    if (kpiStreak) kpiStreak.textContent = "—";
 }
 
 // ============================================
@@ -56,9 +47,11 @@ function renderSubjectChart() {
     const entries = Object.entries(subjectTotals)
         .filter(([id, info]) => Number(info.totalSegundos) > 0);
 
+    const canvas = document.getElementById('subjectChart');
+    if (!canvas) return;
+
     if (entries.length === 0) {
-        const chartParent = document.getElementById('subjectChart')?.parentElement;
-        if (chartParent) chartParent.innerHTML = '<div class="empty-history">Sem dados</div>';
+        canvas.parentElement.innerHTML = '<div class="empty-history">Sem dados</div>';
         return;
     }
 
@@ -71,9 +64,6 @@ function renderSubjectChart() {
         values.push(Number(info.totalSegundos) || 0);
         colors.push(info.color || '#999');
     }
-
-    const canvas = document.getElementById('subjectChart');
-    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (subjectChartInstance) subjectChartInstance.destroy();
@@ -114,6 +104,8 @@ function renderSubjectChart() {
 // ============================================
 
 function renderRanking() {
+    if (!rankingList) return;
+
     const entries = Object.entries(subjectTotals)
         .map(([id, info]) => ({
             id: id,
@@ -123,8 +115,6 @@ function renderRanking() {
         }))
         .filter(e => e.seconds > 0)
         .sort((a, b) => b.seconds - a.seconds);
-
-    if (!rankingList) return;
 
     if (entries.length === 0) {
         rankingList.innerHTML = '<div class="empty-history">Sem dados</div>';
@@ -160,6 +150,8 @@ function renderRanking() {
 // ============================================
 
 function renderSubjectTable() {
+    if (!subjectTable) return;
+
     const entries = Object.entries(subjectTotals)
         .map(([id, info]) => ({
             id: id,
@@ -169,8 +161,6 @@ function renderSubjectTable() {
         }))
         .filter(e => e.seconds > 0)
         .sort((a, b) => b.seconds - a.seconds);
-
-    if (!subjectTable) return;
 
     if (entries.length === 0) {
         subjectTable.innerHTML = '<div class="empty-history">Sem dados</div>';
@@ -236,13 +226,6 @@ async function loadStatsFromFirestore() {
         renderSubjectChart();
         renderRanking();
         renderSubjectTable();
-
-        // Limpa os gráficos temporais que não fazem mais sentido (7 dias e 30 dias)
-        const weekChartParent = document.getElementById('weekChart')?.parentElement;
-        if (weekChartParent) weekChartParent.innerHTML = '<div class="empty-history">Desativado (Histórico Estático)</div>';
-        
-        const monthChartParent = document.getElementById('monthChart')?.parentElement;
-        if (monthChartParent) monthChartParent.innerHTML = '<div class="empty-history">Desativado (Histórico Estático)</div>';
 
         console.log('☁️ Estatísticas carregadas:', Object.keys(subjectTotals).length, 'matérias');
     } catch (err) {
