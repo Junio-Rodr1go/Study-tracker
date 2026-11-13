@@ -269,7 +269,7 @@ function renderRanking() {
                     <div class="ranking-bar-fill" style="width: ${pct}%; background: ${entry.color}"></div>
                 </div>
             </div>
-            <div class="ranking-time">${formatHM(entry.seconds)}</div>
+            <div class="ranking-time">${formatSmart(entry.seconds)}</div>
         `;
         rankingList.appendChild(item);
     });
