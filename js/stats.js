@@ -5,11 +5,6 @@
 let subjectTotals = {};
 let currentUserStats = null;
 
-// ===== Elementos =====
-const kpiTotal = document.getElementById('kpiTotal');
-const rankingList = document.getElementById('rankingList');
-const subjectTable = document.getElementById('subjectTable');
-
 // ===== Helpers =====
 
 function formatHM(totalSeconds) {
@@ -35,7 +30,10 @@ function renderKPIs() {
         total += subjectTotals[id].totalSegundos;
     }
     
-    if (kpiTotal) kpiTotal.textContent = formatSmart(total);
+    const kpiTotal = document.getElementById('kpiTotal');
+    if (kpiTotal) {
+        kpiTotal.textContent = formatSmart(total);
+    }
 }
 
 // ============================================
@@ -104,6 +102,7 @@ function renderSubjectChart() {
 // ============================================
 
 function renderRanking() {
+    const rankingList = document.getElementById('rankingList');
     if (!rankingList) return;
 
     const entries = Object.entries(subjectTotals)
@@ -150,6 +149,7 @@ function renderRanking() {
 // ============================================
 
 function renderSubjectTable() {
+    const subjectTable = document.getElementById('subjectTable');
     if (!subjectTable) return;
 
     const entries = Object.entries(subjectTotals)
@@ -229,7 +229,7 @@ async function loadStatsFromFirestore() {
 
         console.log('☁️ Estatísticas carregadas:', Object.keys(subjectTotals).length, 'matérias');
     } catch (err) {
-        console.error('Erro ao carregar estatísticas:', err);
+        console.error('Erro real ao carregar estatísticas:', err);
     }
 }
 
