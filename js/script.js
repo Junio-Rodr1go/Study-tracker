@@ -329,22 +329,7 @@ function saveSession(duration, subjectId) {
 
 function clearHistory() {
     if (sessions.length === 0) return;
-    if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
-        if (currentUser) {
-            const uid = currentUser.uid;
-            const batch = db.batch();
-
-            db.collection('users').doc(uid).collection('sessions')
-                .get().then(snap => {
-                    snap.forEach(doc => batch.delete(doc.ref));
-                    return db.collection('users').doc(uid).collection('subjects').get();
-                })
-                .then(snap => {
-                    snap.forEach(doc => batch.delete(doc.ref));
-                    return batch.commit();
-                })
-                .catch(err => console.warn('Erro ao limpar nuvem:', err));
-        }
+    if (confirm('Limpar o histórico exibido na tela?\n\nSeus dados salvos na nuvem NÃO serão apagados.')) {
         sessions = [];
         renderAll();
     }
