@@ -54,27 +54,48 @@ authForm.addEventListener('submit', async (e) => {
         let uid;
 
         if (mode === 'login') {
+            // TENTATIVA DE LOGIN
             const cred = await auth.signInWithEmailAndPassword(email, password);
             uid = cred.user.uid;
             console.log('✅ Login OK:', uid);
         } else {
+            // TENTATIVA DE CADASTRO
             const cred = await auth.createUserWithEmailAndPassword(email, password);
             uid = cred.user.uid;
             console.log('✅ Cadastro OK:', uid);
         }
 
+        // Cria/atualiza o documento no banco de dados (apenas para garantir que o perfil exista)
         await db.collection('users').doc(uid).set({
             email: email,
             totalSegundos: firebase.firestore.FieldValue.increment(0)
         }, { merge: true });
 
         console.log('✅ Firestore OK:', uid);
+        
+        // Redireciona para o app
         window.location.href = 'index.html';
 
     } catch (err) {
         isSubmitting = false;
         console.error('❌ Erro:', err);
-        showError(err.code || err.message || 'Erro desconhecido');
+
+        // Traduz os erros mais comuns do Firebase para o usuário
+        let msg = 'Ocorreu um erro. Tente novamente.';
+        
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+            msg = 'E-mail ou senha incorretos, ou a conta não existe. Vá em "Cadastrar" para criar uma conta.';
+        } else if (err.code === 'auth/wrong-password') {
+            msg = 'Senha incorreta.';
+        } else if (err.code === 'auth/email-already-in-use') {
+            msg = 'Este e-mail já está cadastrado. Tente entrar.';
+        } else if (err.code === 'auth/weak-password') {
+            msg = 'A senha deve ter pelo menos 6 caracteres.';
+        } else if (err.code === 'auth/invalid-email') {
+            msg = 'Formato de e-mail inválido.';
+        }
+
+        showError(msg);
         submitBtn.disabled = false;
         submitBtn.textContent = mode === 'login' ? 'Entrar' : 'Criar conta';
     }
